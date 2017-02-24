@@ -1,0 +1,28 @@
+{
+  "name": "blockboom",
+  "version": "0.0.1",
+  "main": "main.js",
+  "devDependencies": {
+    "@types/node": "^7.0.5",
+    "typings": "^2.1.0"
+  },
+  "description": "Bigo's new toy",
+  "dependencies": {
+    "electron": "^1.4.15",
+    "typings": "^2.1.0"
+  },
+  "scripts": {
+    "test": "test",
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bigodines/blockboom.git"
+  },
+  "author": "bigodines",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bigodines/blockboom/issues"
+  },
+  "homepage": "https://github.com/bigodines/blockboom#readme"
+}
