@@ -1,31 +1,62 @@
 {
-  "name": "blockboom",
-  "version": "0.0.1",
-  "main": "main.js",
-  "devDependencies": {
-    "@types/node": "^7.0.5",
-    "typings": "^2.1.0",
-    "rimraf": "^2.5.2"
-  },
-  "description": "Bigo's first game.",
-  "dependencies": {
-    "electron": "^1.4.15",
-    "typings": "^2.1.0"
-  },
-  "scripts": {
-    "build": "npm run clean && tsc",
-    "clean": "rimraf dist",
-    "start": "electron .",
-    "test": "test"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/bigodines/blockboom.git"
-  },
-  "author": "bigodines",
+  "name": "angular-2-electron-seed",
+  "version": "0.0.0",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/bigodines/blockboom/issues"
+  "main": "dist/entry.js",
+  "angular-cli": {},
+  "scripts": {
+    "postinstall": "cpx webpack-build-common.js node_modules/angular-cli/models && cpx webpack-build-test.js node_modules/angular-cli/models",
+    "build": "ng build",
+    "build:prod": "ng build --prod",
+    "run": "electron .",
+    "start": "concurrently \"ng serve\" \"electron src/entry.live.js\"",
+    "package:linux": "electron-packager . $npm_package_name-$npm_package_version --ignore=src --ignore=e2e --ignore=.*\\.conf\\.js --ignore=\"(angular-cli|tsconfig)\\.json\" --ignore=webpack.*\\.js --out=packages --platform=linux --arch=all --overwrite",
+    "package:mac": "electron-packager . $npm_package_name-$npm_package_version --ignore=src --ignore=e2e --ignore=.*\\.conf\\.js --ignore=\"(angular-cli|tsconfig)\\.json\" --ignore=webpack.*\\.js --out=packages --platform=darwin --arch=all --overwrite ",
+    "package:win": "electron-packager . $npm_package_name-$npm_package_version --ignore=src --ignore=e2e --ignore=.*\\.conf\\.js --ignore=\"(angular-cli|tsconfig)\\.json\" --ignore=webpack.*\\.js --out=packages --platform=win32 --arch=all --overwrite ",
+    "package:all": "electron-packager . $npm_package_name-$npm_package_version --ignore=src --ignore=e2e --ignore=.*\\.conf\\.js --ignore=\"(angular-cli|tsconfig)\\.json\" --ignore=webpack.*\\.js --out=packages --all --overwrite",
+    "lint": "tslint \"src/**/*.ts\"",
+    "test": "ng test",
+    "pree2e": "webdriver-manager update",
+    "e2e": "protractor"
   },
-  "homepage": "https://github.com/bigodines/blockboom#readme"
+  "private": true,
+  "dependencies": {
+    "@angular/common": "~2.1.0",
+    "@angular/compiler": "~2.1.0",
+    "@angular/core": "~2.1.0",
+    "@angular/forms": "~2.1.0",
+    "@angular/http": "~2.1.0",
+    "@angular/platform-browser": "~2.1.0",
+    "@angular/platform-browser-dynamic": "~2.1.0",
+    "@angular/router": "~3.1.0",
+    "core-js": "^2.4.1",
+    "rxjs": "5.0.0-beta.12",
+    "ts-helpers": "^1.1.1",
+    "zone.js": "^0.6.23"
+  },
+  "devDependencies": {
+    "@types/electron": "^1.4.31",
+    "@types/jasmine": "2.5.41",
+    "@types/node": "^6.0.42",
+    "angular-cli": "1.0.0-beta.19-3",
+    "codelyzer": "1.0.0-beta.1",
+    "concurrently": "^3.1.0",
+    "copy-webpack-plugin": "^4.0.1",
+    "cpx": "^1.5.0",
+    "electron": "^1.4.11",
+    "electron-packager": "^8.4.0",
+    "jasmine-core": "^2.5.2",
+    "jasmine-spec-reporter": "2.5.0",
+    "karma": "1.2.0",
+    "karma-chrome-launcher": "^2.0.0",
+    "karma-cli": "^1.0.1",
+    "karma-electron": "^5.1.1",
+    "karma-jasmine": "^1.0.2",
+    "karma-remap-istanbul": "^0.2.1",
+    "protractor": "4.0.9",
+    "ts-node": "1.2.1",
+    "tslint": "3.13.0",
+    "typescript": "~2.0.3",
+    "webdriver-manager": "10.2.5"
+  }
 }

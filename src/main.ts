@@ -1,22 +1,12 @@
-const { app, BrowserWindow } = require("electron");
-declare var __dirname, process;
- 
-let win;
- 
-let createWindow = () => {
-    win = new BrowserWindow({width:800, height: 900});
-    win.loadURL(`file://${__dirname}/index.html`);
-    win.on("closed", () => {
-        win = null;
-    });
+import './polyfills.ts';
+
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { enableProdMode } from '@angular/core';
+import { environment } from './environments/environment';
+import { AppModule } from './app/';
+
+if (environment.production) {
+  enableProdMode();
 }
-app.on("ready", createWindow);
-app.on("window-all-closed", () => {
-    if(process.platform !== "darwin") {
-        app.quit();
-    }
-});
- 
-app.on("activate", () => {
-    if(win === null) createWindow();
-});
+
+platformBrowserDynamic().bootstrapModule(AppModule);
