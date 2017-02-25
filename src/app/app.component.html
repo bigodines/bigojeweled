@@ -1,12 +1,20 @@
 <div id="tetris">
-    <div id="menu">
-      <p><canvas id="upcoming"></canvas></p>
-      <p id="start"><a href="javascript:play();">Press space to start.</a></p>
-      <p>score <span id="score">00000</span></p>
-      <p>rows <span id="rows">0</span></p>
-      <p>rows <span id="ammo"></span></p>
+    <div id="main">
+      <canvas id="canvas">
+        Sorry, this app cannot be run because your browser does not support the &lt;canvas&gt; element
+      </canvas>
     </div>
-    <canvas id="canvas">
-      Sorry, this example cannot be run because your browser does not support the &lt;canvas&gt; element
-    </canvas>
+    <div id="side">
+      <canvas id="player2">
+        Sorry, this app cannot be run because your browser does not support the &lt;canvas&gt; element
+      </canvas>
+
+      <div id="menu">
+        <div><canvas id="upcoming"></canvas></div>
+        <div id="start"><a href="javascript:play();">Press space to start.</a></div>
+        <div>score <span id="score">00000</span></div>
+        <div>rows <span id="rows">0</span></div>
+        <div>ammo <span id="ammo"></span></div>
+      </div>
+    </div>
 </div>
