@@ -1,6 +1,8 @@
 import {
     Component,
-    OnInit
+    ElementRef,
+    OnInit,
+    ViewChild
 } from '@angular/core';
 
 import { GameService } from './game.service';
@@ -24,17 +26,23 @@ enum Types {
 })
 export class GameComponent implements OnInit {
 
+    protected ctx:CanvasRenderingContext2D;
     protected grid:Array<Array<String>> = [];
     protected numrows = 10
     protected numlines = 10;
 
-    constructor(private service: GameService) { }
+    @ViewChild("canvas") canvas: ElementRef;
+
+    constructor(private service: GameService) {
+
+     }
 
     ngOnInit() {
+        console.log(this.canvas);
+        this.ctx = this.canvas.nativeElement.getContext("2d");
         this.buildSprite();
         this.buildBoard();
         this.draw();
-        console.log(this);
     }
 
     /** does nothing for now. */
@@ -73,6 +81,9 @@ export class GameComponent implements OnInit {
 
     print(x:number, y:number, block:String) {
         // TODO: Print one particular element.
+        console.log(x,y);
+        this.ctx.fillStyle = 'blue';
+        this.ctx.fillRect(1+(x * 20), 1+(y * 10), 10, 3);
     }
 
 
