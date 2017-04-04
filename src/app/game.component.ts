@@ -83,7 +83,7 @@ export class GameComponent implements OnInit {
         // TODO: Print one particular element.
         console.log(x,y);
         this.ctx.fillStyle = 'blue';
-        this.ctx.fillRect(1+(x * 20), 1+(y * 10), 10, 3);
+        this.ctx.fillRect((x * 30), (y * 15), 28, 14);
     }
 
 
