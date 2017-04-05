@@ -108,14 +108,12 @@ export class GameComponent implements OnInit {
     clicked(event) {
         var x:number = event.clientX;
         var y:number = event.clientY;
-        //console.log(event);
         console.log(x, y, this._getBlockAt(x, y));
     }
 
     _getBlockAt(canvas_x:number, canvas_y:number): any {
         let x = Math.trunc(canvas_x/40);
         let y = Math.trunc(canvas_y/40);
-        console.log(x, y);
         return this.grid[x][y];
     }
 
