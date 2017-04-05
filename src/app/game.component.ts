@@ -7,6 +7,7 @@ import {
 
 import { GameService } from './game.service';
 
+/** Block types. */
 enum Types {
     A,
     B,
@@ -82,10 +83,8 @@ export class GameComponent implements OnInit {
 
     }
 
-    print(x: number, y: number, block: any) {
-        // TODO: Print one particular element.
-        let color: String;
-        let type: Types = Types[<string>block];
+    print(x: number, y: number, type: any) {
+        let color: String = 'white';
 
         if (type == Types.A) {
             color = 'blue';
@@ -101,28 +100,31 @@ export class GameComponent implements OnInit {
             color = 'gray';
         } else if(type == Types.G) {
             color = 'black';
-        } else {
-            color = 'white';
-        }
-        // case Types.C: { 
-        //     color = 'green';
-        //     break;
-        // }
-        // default: {
-        //     color = 'white';
-        // }
+        } 
         this.ctx.fillStyle = color as string;
         this.ctx.fillRect(x * 40, y * 40, 39, 39);
     }
 
+    clicked(event) {
+        var x:number = event.clientX;
+        var y:number = event.clientY;
+        //console.log(event);
+        console.log(x, y, this._getBlockAt(x, y));
+    }
+
+    _getBlockAt(canvas_x:number, canvas_y:number): any {
+        let x = Math.trunc(canvas_x/40);
+        let y = Math.trunc(canvas_y/40);
+        console.log(x, y);
+        return this.grid[x][y];
+    }
 
     /** helper candidates */
     /** Get a random element  from ENUM */
-    _getRandomEnum<E>(e: any): String {
-        var keys =Object.keys(e).filter(key => !isNaN(Number(e[key])));
-        var index = Math.floor(Math.random() * keys.length),
+    _getRandomEnum<E>(e: any): any {
+        let keys =Object.keys(e).filter(key => !isNaN(Number(e[key]))),
+            index = Math.floor(Math.random() * keys.length),
             k = keys[index];
-
-        return k;
+        return Types[<string>k];
     }
 }
