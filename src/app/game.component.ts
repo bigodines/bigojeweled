@@ -28,7 +28,7 @@ export class GameComponent implements OnInit {
 
     protected ctx:CanvasRenderingContext2D;
     protected grid:Array<Array<String>> = [];
-    protected numrows = 10
+    protected numrows = 10;
     protected numlines = 10;
 
     @ViewChild("canvas") canvas: ElementRef;
@@ -56,43 +56,73 @@ export class GameComponent implements OnInit {
         let row:Array<any>;
         let rand:number;
 
+        // this.ctx.fillStyle = "black";
+        // this.ctx.fillRect(0,0,400, 400);
+
         for (x = 0; x < this.numrows; x++) {
             row = [];
             for (y = 0; y < this.numlines; y++) {
-                row.push(this._getRandomEnum<Types>(Types));
+                var e:any = this._getRandomEnum<Types>(Types);
+                row.push(e);
             }
             this.grid.push(row);
         }
+        console.log(this.grid);
     }
 
     draw() {
         let x:number;
         let y:number;
-        let row:Array<String>;
 
-        for(x = 0; x < this.grid.length; x++) {
-            row = this.grid[x];
-            for(y = 0; y < row.length; y++) {
-                this.print(x, y, row[x][y]);
+        for(x = 0; x < this.numrows; x++) {
+            for(y = 0; y < this.numlines; y++) {
+                this.print(x, y, this.grid[x][y]);
             }
         }
 
     }
 
-    print(x:number, y:number, block:String) {
+    print(x: number, y: number, block: any) {
         // TODO: Print one particular element.
-        console.log(x,y);
-        this.ctx.fillStyle = 'blue';
-        this.ctx.fillRect((x * 30), (y * 15), 28, 14);
+        let color: String;
+        let type: Types = Types[<string>block];
+
+        if (type == Types.A) {
+            color = 'blue';
+        } else if (type == Types.B) {
+            color = 'yellow';
+        } else if(type == Types.C) {
+            color = 'green';
+        } else if(type == Types.D) {
+            color = 'red';
+        } else if(type == Types.E) {
+            color = 'orange';
+        } else if(type == Types.F) {
+            color = 'gray';
+        } else if(type == Types.G) {
+            color = 'black';
+        } else {
+            color = 'white';
+        }
+        // case Types.C: { 
+        //     color = 'green';
+        //     break;
+        // }
+        // default: {
+        //     color = 'white';
+        // }
+        this.ctx.fillStyle = color as string;
+        this.ctx.fillRect(x * 40, y * 40, 39, 39);
     }
 
 
     /** helper candidates */
     /** Get a random element  from ENUM */
     _getRandomEnum<E>(e: any): String {
-        var keys = Object.keys(e),
-            index = Math.floor(Math.random() * keys.length),
+        var keys =Object.keys(e).filter(key => !isNaN(Number(e[key])));
+        var index = Math.floor(Math.random() * keys.length),
             k = keys[index];
+
         return k;
     }
 }
