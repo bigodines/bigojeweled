@@ -17,6 +17,14 @@ enum Types {
     F,
     G
 }
+const blockSize = 50;
+
+export class Block {
+    public x:number;
+    public y:number;
+    public block:any
+
+}
 /**
  *  Game screen component
  * */
@@ -29,8 +37,10 @@ export class GameComponent implements OnInit {
 
     protected ctx:CanvasRenderingContext2D;
     protected grid:Array<Array<String>> = [];
-    protected numrows = 10;
-    protected numlines = 10;
+    protected numrows = 8;
+    protected numlines = 8;
+
+    protected selected:Array<Block> = [];
 
     @ViewChild("canvas") canvas: ElementRef;
 
@@ -39,7 +49,7 @@ export class GameComponent implements OnInit {
      }
 
     ngOnInit() {
-        console.log(this.canvas);
+        //console.log(this.canvas);
         this.ctx = this.canvas.nativeElement.getContext("2d");
         this.buildSprite();
         this.buildBoard();
@@ -68,13 +78,18 @@ export class GameComponent implements OnInit {
             }
             this.grid.push(row);
         }
-        console.log(this.grid);
+        //console.log(this.grid);
+    }
+
+    wipe() {
+        this.ctx.clearRect(0, 0, 400, 400);
     }
 
     draw() {
         let x:number;
         let y:number;
 
+        this.wipe();
         for(x = 0; x < this.numrows; x++) {
             for(y = 0; y < this.numlines; y++) {
                 this.print(x, y, this.grid[x][y]);
@@ -102,19 +117,57 @@ export class GameComponent implements OnInit {
             color = 'black';
         } 
         this.ctx.fillStyle = color as string;
-        this.ctx.fillRect(x * 40, y * 40, 39, 39);
+        this.ctx.fillRect(x*blockSize, y*blockSize, blockSize-1, blockSize-1);
     }
 
     clicked(event) {
         var x:number = event.clientX;
         var y:number = event.clientY;
-        console.log(x, y, this._getBlockAt(x, y));
+        var previousSelection:Block = <Block>{};
+        var currentSelection:Block = this._getBlockAt(x,y);
+
+        // console.log(currentSelection);
+
+        if (this.selected.length === 0) {
+            this.selected.push(currentSelection);
+        } else {
+            previousSelection = this.selected[0];
+            // Only X or Y can change from previous selection
+            if (currentSelection.x != previousSelection.x && currentSelection.y != previousSelection.y)  {
+                
+                console.debug('not straight', currentSelection, previousSelection);
+                this.selected = [];
+                return;
+            }
+            if (Math.abs(currentSelection.x - previousSelection.x) > 1 || Math.abs(currentSelection.y - previousSelection.y) > 1) {
+                console.debug('too far', currentSelection, previousSelection);
+
+                this.selected = [];
+                return;
+            }
+
+            // Swap!
+            this.grid = this.swap(this.grid, previousSelection, currentSelection);
+            this.selected = [];
+            this.draw();
+
+        }
     }
 
-    _getBlockAt(canvas_x:number, canvas_y:number): any {
-        let x = Math.trunc(canvas_x/40);
-        let y = Math.trunc(canvas_y/40);
-        return this.grid[x][y];
+    swap(grid, previousSelection, currentSelection) {
+        grid[previousSelection.x][previousSelection.y] = currentSelection.block;
+        grid[currentSelection.x][currentSelection.y] = previousSelection.block;
+        return grid ;    
+    }
+
+    _getBlockAt(canvas_x:number, canvas_y:number): Block {
+        let x = Math.floor(canvas_x/blockSize);
+        let y = Math.floor(canvas_y/blockSize);
+        return <Block>{ 
+            x: x, 
+            y: y, 
+            block: this.grid[x][y] 
+        };
     }
 
     /** helper candidates */
