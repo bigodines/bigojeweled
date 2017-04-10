@@ -177,15 +177,10 @@ export class GameComponent implements OnInit {
         /** Using the same loop to match horizontal and vertical sequences */
         for (x=0; x<numrows; x++) {
             // buffer of items that match
-            verticalMatches = [[0, x]];
-            
+            verticalMatches = [[x, 0]];
             for (y=0; y<numrows; y++) {
-                horizontalMatches = [[y, x]];
                 let verticalCandidateX = verticalMatches[0][0];
                 let verticalCandidateY = verticalMatches[0][1];
-                let horizontalCandidateX = horizontalMatches[0][0];
-                let horizontalCandidateY = horizontalMatches[0][1];
-
                 if (grid[x][y] != grid[verticalCandidateX][verticalCandidateY]) {
                     // vertical match!
                     if (verticalMatches.length >= 3) { 
@@ -196,7 +191,17 @@ export class GameComponent implements OnInit {
                     verticalMatches = [];
 
                 }
-                //console.log(grid[horizontalCandidateX][horizontalCandidateY]);
+                verticalMatches.push([x, y]);
+            }
+        }
+
+        for (y=0; y<numrows; y++) {
+            // buffer of items that match
+            horizontalMatches = [[0, y]];
+
+            for (x=0; x<numrows; x++) {
+                let horizontalCandidateX = horizontalMatches[0][0];
+                let horizontalCandidateY = horizontalMatches[0][1];
                 if (grid[x][y] != grid[horizontalCandidateX][horizontalCandidateY]) { 
                     // horizontal match!
                     if(horizontalMatches.length >= 3) { 
@@ -206,11 +211,11 @@ export class GameComponent implements OnInit {
                     }
                     horizontalMatches = [];
                 }
-                verticalMatches.push([x, y]);
                 horizontalMatches.push([x, y]);
             }
         }
 
+        console.log(scores);
         // TODO: FIX-ME
         for (var xy=0; xy<scores.length; xy++) {
             let x:number = scores[xy][0];
@@ -219,7 +224,6 @@ export class GameComponent implements OnInit {
             this.score = this.score + 10;
         }
 
-        console.log(grid);
         return grid;
     }
 
