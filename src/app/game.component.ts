@@ -15,7 +15,8 @@ enum Types {
     D,
     E,
     F,
-    G
+    G,
+    H
 }
 const blockSize = 50;
 const numrows = 8;
@@ -99,25 +100,13 @@ export class GameComponent implements OnInit {
     }
 
     print(x: number, y: number, type: any) {
-        let color: String = 'white';
-
-        if (type == Types.A) {
-            color = 'blue';
-        } else if (type == Types.B) {
-            color = 'yellow';
-        } else if(type == Types.C) {
-            color = 'green';
-        } else if(type == Types.D) {
-            color = 'red';
-        } else if(type == Types.E) {
-            color = 'orange';
-        } else if(type == Types.F) {
-            color = 'gray';
-        } else if(type == Types.G) {
-            color = 'black';
-        } 
-        this.ctx.fillStyle = color as string;
-        this.ctx.fillRect(x*blockSize, y*blockSize, blockSize-1, blockSize-1);
+        let image:HTMLImageElement = new Image();
+        var imageFile = 'assets/' + Types[type] + '.png';
+        image.src = imageFile;
+        var ctx = this.ctx;
+        image.onload = function () {
+            ctx.drawImage(image, x*blockSize, y*blockSize, blockSize, blockSize);
+        }
     }
 
     clicked(event) {
@@ -144,7 +133,6 @@ export class GameComponent implements OnInit {
             }
             if (Math.abs(currentSelection.x - previousSelection.x) > 1 || Math.abs(currentSelection.y - previousSelection.y) > 1) {
                 console.debug('too far', currentSelection, previousSelection);
-
                 this.selected = [];
                 return;
             }
