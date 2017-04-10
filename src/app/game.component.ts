@@ -18,6 +18,7 @@ enum Types {
     G
 }
 const blockSize = 50;
+const numrows = 8;
 
 export class Block {
     public x:number;
@@ -35,14 +36,13 @@ export class Block {
 })
 export class GameComponent implements OnInit {
 
-    protected ctx:CanvasRenderingContext2D;
-    protected grid:Array<Array<String>> = [];
-    protected numrows = 8;
-    protected numlines = 8;
-
     protected selected:Array<Block> = [];
 
+    // game state
+    protected ctx:CanvasRenderingContext2D;
+    protected grid:Array<Array<String>> = [];
     @ViewChild("canvas") canvas: ElementRef;
+    protected score:number = 0;
 
     constructor(private service: GameService) {
 
@@ -70,9 +70,9 @@ export class GameComponent implements OnInit {
         // this.ctx.fillStyle = "black";
         // this.ctx.fillRect(0,0,400, 400);
 
-        for (x = 0; x < this.numrows; x++) {
+        for (x = 0; x < numrows; x++) {
             row = [];
-            for (y = 0; y < this.numlines; y++) {
+            for (y = 0; y < numrows; y++) {
                 var e:any = this._getRandomEnum<Types>(Types);
                 row.push(e);
             }
@@ -90,8 +90,8 @@ export class GameComponent implements OnInit {
         let y:number;
 
         this.wipe();
-        for(x = 0; x < this.numrows; x++) {
-            for(y = 0; y < this.numlines; y++) {
+        for(x = 0; x < numrows; x++) {
+            for(y = 0; y < numrows; y++) {
                 this.print(x, y, this.grid[x][y]);
             }
         }
@@ -128,6 +128,9 @@ export class GameComponent implements OnInit {
 
         // console.log(currentSelection);
 
+        /**
+         * TODO: move this logic to service
+         */
         if (this.selected.length === 0) {
             this.selected.push(currentSelection);
         } else {
@@ -148,7 +151,9 @@ export class GameComponent implements OnInit {
 
             // Swap!
             this.grid = this.swap(this.grid, previousSelection, currentSelection);
+
             this.selected = [];
+            this.grid = this.checkBoard(this.grid);
             this.draw();
 
         }
@@ -158,6 +163,64 @@ export class GameComponent implements OnInit {
         grid[previousSelection.x][previousSelection.y] = currentSelection.block;
         grid[currentSelection.x][currentSelection.y] = previousSelection.block;
         return grid ;    
+    }
+
+    checkBoard(grid:Array<Array<String>>): Array<Array<String>> {
+        var x:number;
+        var y:number;
+
+        // coordinates of items to be removed from the board and computed as score.
+        var scores:Array<Array<number>> = []; 
+        var verticalMatches;
+        var horizontalMatches
+
+        /** Using the same loop to match horizontal and vertical sequences */
+        for (x=0; x<numrows; x++) {
+            // buffer of items that match
+            verticalMatches = [[0, x]];
+            
+            for (y=0; y<numrows; y++) {
+                horizontalMatches = [[y, x]];
+                let verticalCandidateX = verticalMatches[0][0];
+                let verticalCandidateY = verticalMatches[0][1];
+                let horizontalCandidateX = horizontalMatches[0][0];
+                let horizontalCandidateY = horizontalMatches[0][1];
+
+                if (grid[x][y] != grid[verticalCandidateX][verticalCandidateY]) {
+                    // vertical match!
+                    if (verticalMatches.length >= 3) { 
+                        verticalMatches.map(function(coordinates) {
+                            scores.push(coordinates);
+                        })
+                    }
+                    verticalMatches = [];
+
+                }
+                //console.log(grid[horizontalCandidateX][horizontalCandidateY]);
+                if (grid[x][y] != grid[horizontalCandidateX][horizontalCandidateY]) { 
+                    // horizontal match!
+                    if(horizontalMatches.length >= 3) { 
+                        horizontalMatches.map(function(coordinates) {
+                            scores.push(coordinates);
+                        })
+                    }
+                    horizontalMatches = [];
+                }
+                verticalMatches.push([x, y]);
+                horizontalMatches.push([x, y]);
+            }
+        }
+
+        // TODO: FIX-ME
+        for (var xy=0; xy<scores.length; xy++) {
+            let x:number = scores[xy][0];
+            let y:number = scores[xy][1];
+            grid[x][y] = "-1";
+            this.score = this.score + 10;
+        }
+
+        console.log(grid);
+        return grid;
     }
 
     _getBlockAt(canvas_x:number, canvas_y:number): Block {
