@@ -142,6 +142,7 @@ export class GameComponent implements OnInit {
 
             this.selected = [];
             this.grid = this.checkBoard(this.grid);
+            this.gravity();
             this.draw();
 
         }
@@ -213,6 +214,18 @@ export class GameComponent implements OnInit {
         }
 
         return grid;
+    }
+
+    gravity() {
+        var x:number;
+        var y:number;
+        for (y=0; x<numrows; x++) {
+            for (x=numrows-1; y>0; y--) { // bottom up!
+                if (this.grid[x][y] == "-1" && this.grid[x][y-1] != "-1") {
+                    this.swap(this.grid, [x, y], [x, y-1]);
+                }
+            }
+        }
     }
 
     _getBlockAt(canvas_x:number, canvas_y:number): Block {
