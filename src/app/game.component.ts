@@ -54,6 +54,8 @@ export class GameComponent implements OnInit {
         this.ctx = this.canvas.nativeElement.getContext("2d");
         this.buildSprite();
         this.buildBoard();
+        var state = this.checkBoard(this.grid);
+        this.grid = state.grid;
         this.draw();
     }
 
@@ -101,7 +103,13 @@ export class GameComponent implements OnInit {
 
     print(x: number, y: number, type: any) {
         let image:HTMLImageElement = new Image();
-        var imageFile = 'assets/' + Types[type] + '.png';
+        let imageFile
+        if (Types[type]) {
+            imageFile = 'assets/' + Types[type] + '.png';
+        } else {
+            imageFile = 'assets/' + Types[type] + '.png'; // TODO: empty image
+        }
+
         image.src = imageFile;
         var ctx = this.ctx;
         image.onload = function () {
@@ -114,8 +122,6 @@ export class GameComponent implements OnInit {
         var y:number = event.clientY;
         var previousSelection:Block = <Block>{};
         var currentSelection:Block = this._getBlockAt(x,y);
-
-        // console.log(currentSelection);
 
         /**
          * TODO: move this logic to service
@@ -137,11 +143,27 @@ export class GameComponent implements OnInit {
                 return;
             }
 
-            // Swap!
+            /**
+             * swap
+             * changes, board = checkBoard
+             * draw proper grid
+             */
+            var oldGrid = JSON.parse(JSON.stringify(this.grid));
+
             this.grid = this.swap(this.grid, previousSelection, currentSelection);
 
+            var newBoardState = this.checkBoard(this.grid);
+            console.log("New state!");
+            console.log(newBoardState.changes);
+            if (newBoardState.changes.length > 0) {
+                this.grid = newBoardState.grid;
+            } else {
+                console.log('Invalid move!');
+                this.grid = oldGrid;
+            }
+            
             this.selected = [];
-            this.grid = this.checkBoard(this.grid);
+            //var newState = this.checkBoard(this.grid);
             this.gravity();
             this.draw();
 
@@ -154,7 +176,7 @@ export class GameComponent implements OnInit {
         return grid ;    
     }
 
-    checkBoard(grid:Array<Array<String>>): Array<Array<String>> {
+    checkBoard(grid:Array<Array<String>>): any {
         var x:number;
         var y:number;
 
@@ -204,22 +226,22 @@ export class GameComponent implements OnInit {
             }
         }
 
-        console.log(scores);
-        // TODO: FIX-ME
+//        console.log(scores);
+        // TODO: Pull items to the bottom.
         for (var xy=0; xy<scores.length; xy++) {
             let x:number = scores[xy][0];
             let y:number = scores[xy][1];
             grid[x][y] = "-1";
             this.score = this.score + 10;
         }
-
-        return grid;
+        return {changes: scores, grid: grid};
     }
 
     gravity() {
+        console.log('Gravity rules');
         var x:number;
         var y:number;
-        for (y=0; x<numrows; x++) {
+        for (y=1; x<numrows; x++) {
             for (x=numrows-1; y>0; y--) { // bottom up!
                 if (this.grid[x][y] == "-1" && this.grid[x][y-1] != "-1") {
                     this.swap(this.grid, [x, y], [x, y-1]);
